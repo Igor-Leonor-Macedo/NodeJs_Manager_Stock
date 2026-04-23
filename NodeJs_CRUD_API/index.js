@@ -1,21 +1,13 @@
-const Database = require('better-sqlite3');
+require('./src/entity/user'); // garante que a tabela existe
 
-// Cria (ou abre) o banco de dados — o arquivo "banco.db" será criado automaticamente
-const db = new Database('USERS');
+const express = require('express');
+const app = express();
 
-// Cria uma tabela
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT NOT NULL,
-    phoneNumber TEXT NOT NULL
-  )
-`);
+app.use(express.json()); // habilita leitura do corpo JSON da requisição
 
-// Insere um registro
-const inserir = db.prepare('INSERT INTO users (nome, phoneNumber) VALUES (?, ?)');
-inserir.run('Maria Silva', '62 3878-5198');
+const usuarioController = require('./src/controller/userController');
+app.use('/users', usuarioController);
 
-// Busca todos os registros
-const users = db.prepare('SELECT * FROM users').all();
-console.log(users);
+app.listen(3000, () => {
+  console.log('Servidor rodando em http://localhost:3000');
+});
