@@ -1,12 +1,14 @@
-// Responsável pelas regras de negócio.
-// Aqui você valida, transforma dados, antes de chamar o repository.
-
-const usuarioRepository = require('../repository/userRepository');
+const usuarioRepository = require('../repository/userRepository'); // ajuste o caminho conforme sua estrutura
+const userNotFound = require('../exceptions/error/userNotFound');
+const userAlreadyExists      = require('../exceptions/error/userAlreadyExists');
+const theFieldNotNull     = require('../exceptions/error/theFieldNotNull');
 
 function criarUsuario(nome, phoneNumber) {
-    if (!nome || !phoneNumber) {
-        throw new Error('Nome e phoneNumber são obrigatórios');
-    }
+    if (!nome) throw new theFieldNotNull('nome');
+    if (!phoneNumber) throw new theFieldNotNull('phoneNumber');
+
+    const existente = usuarioRepository.buscarPorEmail(phoneNumber);
+    if (existente) throw new userAlreadyExists();
 
     const id = usuarioRepository.criar(nome, phoneNumber);
     return { id, nome, phoneNumber };
@@ -18,20 +20,27 @@ function buscarTodos() {
 
 function buscarPorId(id) {
     const usuario = usuarioRepository.buscarPorId(id);
-    if (!usuario) throw new Error('Usuário não encontrado');
+    if (!usuario) throw new userNotFound();
     return usuario;
 }
 
 function atualizarUsuario(id, nome, phoneNumber) {
-    if (!nome || !phoneNumber) throw new Error('Nome e phoneNumber são obrigatórios');
+    if (!nome) throw new theFieldNotNull('nome');
+    if (!phoneNumber) throw new theFieldNotNull('phoneNumber');
     const alteracoes = usuarioRepository.atualizar(id, nome, phoneNumber);
-    if (alteracoes === 0) throw new Error('Usuário não encontrado');
+    if (alteracoes === 0) throw new userNotFound();
     return { id: Number(id), nome, phoneNumber };
 }
 
 function deletarUsuario(id) {
     const alteracoes = usuarioRepository.deletar(id);
-    if (alteracoes === 0) throw new Error('Usuário não encontrado');
+    if (alteracoes === 0) throw new userNotFound();
 }
 
-module.exports = { criarUsuario, buscarTodos, buscarPorId, atualizarUsuario, deletarUsuario };
+module.exports = { // 👈 faltava isso
+    criarUsuario,
+    buscarTodos,
+    buscarPorId,
+    atualizarUsuario,
+    deletarUsuario
+};
