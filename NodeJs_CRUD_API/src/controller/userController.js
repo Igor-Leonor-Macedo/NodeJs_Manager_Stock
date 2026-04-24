@@ -2,49 +2,40 @@
 
 const express = require('express');
 const router = express.Router();
-const usuarioService = require('../service/userService');
+const userService = require('../service/userService');
 
-router.post('/', (req, res) => {
+router.post('/', (req, res, next) => {
     try {
         const { nome, phoneNumber } = req.body;
-        const user = usuarioService.criarUsuario(nome, phoneNumber);
-        res.status(201).json(user);
-    } catch (error) {
-        res.status(400).json({ erro: error.message });
-    }
+        const usuario = userService.criarUsuario(nome, phoneNumber);
+        res.status(201).json(usuario);
+    } catch (err) { next(err); }
 });
 
-router.get('/', (req, res) => {
-    const usuarios = usuarioService.buscarTodos();
-    res.status(200).json(usuarios);
-});
-
-router.get('/:id', (req, res) => {
+router.get('/', (req, res, next) => {
     try {
-        const usuario = usuarioService.buscarPorId(req.params.id);
-        res.status(200).json(usuario);
-    } catch (error) {
-        res.status(404).json({ erro: error.message });
-    }
+        res.status(200).json(userService.buscarTodos());
+    } catch (err) { next(err); }
 });
 
-router.put('/:id', (req, res) => {
+router.get('/:id', (req, res, next) => {
+    try {
+        res.status(200).json(userService.buscarPorId(req.params.id));
+    } catch (err) { next(err); }
+});
+
+router.put('/:id', (req, res, next) => {
     try {
         const { nome, phoneNumber } = req.body;
-        const usuario = usuarioService.atualizarUsuario(req.params.id, nome, phoneNumber);
-        res.status(200).json(usuario);
-    } catch (error) {
-        res.status(400).json({ erro: error.message });
-    }
+        res.status(200).json(userService.atualizarUsuario(req.params.id, nome, phoneNumber));
+    } catch (err) { next(err); }
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', (req, res, next) => {
     try {
-        usuarioService.deletarUsuario(req.params.id);
+        userService.deletarUsuario(req.params.id);
         res.status(200).json({ mensagem: 'Usuário deletado com sucesso' });
-    } catch (error) {
-        res.status(404).json({ erro: error.message });
-    }
+    } catch (err) { next(err); }
 });
 
 module.exports = router;

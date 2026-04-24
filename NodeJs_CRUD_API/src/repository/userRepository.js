@@ -1,11 +1,12 @@
-// Responsável apenas por falar com o banco de dados.
-
 const db = require('../database');
 
 function criar(nome, phoneNumber) {
     const stmt = db.prepare('INSERT INTO users (nome, phoneNumber) VALUES (?, ?)');
     const result = stmt.run(nome, phoneNumber);
     return result.lastInsertRowid;
+}
+function buscarPorEmail(phoneNumber) {
+    return db.prepare('SELECT * FROM users WHERE phoneNumber = ?').get(phoneNumber);
 }
 
 function buscarTodos() {
@@ -27,4 +28,4 @@ function deletar(id) {
     return result.changes; // retorna 1 se deletou, 0 se não encontrou
 }
 
-module.exports = { criar, buscarTodos, buscarPorId, atualizar, deletar };
+module.exports = { criar, buscarTodos, buscarPorId, buscarPorEmail, atualizar, deletar };
