@@ -5,7 +5,7 @@ function criar(nome, phoneNumber) {
     const result = stmt.run(nome, phoneNumber);
     return result.lastInsertRowid;
 }
-function buscarPorEmail(phoneNumber) {
+function buscarPorTelefone(phoneNumber) {
     return db.prepare('SELECT * FROM users WHERE phoneNumber = ?').get(phoneNumber);
 }
 
@@ -28,4 +28,4 @@ function deletar(id) {
     return result.changes; // retorna 1 se deletou, 0 se não encontrou
 }
 
-module.exports = { criar, buscarTodos, buscarPorId, buscarPorEmail, atualizar, deletar };
+module.exports = { criar, buscarTodos, buscarPorId, buscarPorTelefone, atualizar, deletar };

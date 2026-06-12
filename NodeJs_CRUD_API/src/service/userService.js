@@ -7,7 +7,7 @@ function criarUsuario(nome, phoneNumber) {
     if (!nome) throw new theFieldNotNull('nome');
     if (!phoneNumber) throw new theFieldNotNull('phoneNumber');
 
-    const existente = usuarioRepository.buscarPorEmail(phoneNumber);
+    const existente = usuarioRepository.buscarPorTelefone(phoneNumber);
     if (existente) throw new userAlreadyExists();
 
     const id = usuarioRepository.criar(nome, phoneNumber);
